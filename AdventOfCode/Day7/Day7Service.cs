@@ -9,7 +9,7 @@ using static System.Net.Mime.MediaTypeNames;
 
 namespace AdventOfCode.Day3
 {
-    public class Day6Service : IDayService
+    public class Day7Service : IDayService
     {
         const string FILE_PATH = @"C:\Users\I39125\source\repos\AdventOfCode2022\AdventOfCode\Day6\Day6Input.txt";
 
@@ -25,24 +25,24 @@ namespace AdventOfCode.Day3
 
         private string SolvePart1(string text)
         {
-            return SolvePart(text, 4);
+            return solve(text, 4);
         }
 
-        public bool NextXAreUnique(string text)
+        public bool nextAre4Unique(string text, int count)
         {
-            return text.Distinct().Count() == text.Length;
+            return text.Distinct().Count() == count;
         }
 
         private string SolvePart2(string text)
         {
-            return SolvePart(text, 14);
+            return solve(text, 14);
         }
 
-        private string SolvePart(string text, int SearchNumber)
+        private string solve(string text, int SearchNumber)
         {
             for (int i = 0; i < text.Length; i++)
             {
-                if (NextXAreUnique(text.Substring(i, SearchNumber)))
+                if (nextAre4Unique(text.Substring(i, SearchNumber), SearchNumber))
                 {
                     return $"{i + SearchNumber} - {text.Substring(i, SearchNumber)}";
                 }
