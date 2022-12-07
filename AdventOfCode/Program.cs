@@ -28,4 +28,8 @@ Console.WriteLine("Day6");
 Day6Service day6 = new Day6Service();
 Console.WriteLine(day6.SolveDay());
 
+Console.WriteLine("Day7");
+Day7Service day7 = new Day7Service();
+Console.WriteLine(day7.SolveDay());
+
 Console.ReadLine();

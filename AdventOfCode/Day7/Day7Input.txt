@@ -1,4 +1,4 @@
-﻿$ cd /
+﻿$ cd root
 $ ls
 dir lhrfs
 193233 mvsjmrtn
