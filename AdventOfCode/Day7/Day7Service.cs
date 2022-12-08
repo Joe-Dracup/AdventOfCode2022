@@ -19,9 +19,10 @@ namespace AdventOfCode.Day3
             var fileInput = File.ReadAllLines(FILE_PATH);
 
             List<Directory> directories = SetupDirectories(fileInput);
+            List<Directory> directoriesP2 = SetupDirectories(fileInput);
 
             var part1 = SolvePart1(directories);
-            var part2 = SolvePart2(directories);
+            var part2 = SolvePart2(directoriesP2);
 
             return $"Part1: {part1} Part2: {part2}";
         }
@@ -30,7 +31,7 @@ namespace AdventOfCode.Day3
         {
             List<Directory> directories = new List<Directory>();
 
-            string currentPath = "";
+            string currentPath = "", currentName = "";
             int currentSize;
             Directory currentDirectory = new Directory();
 
@@ -40,7 +41,9 @@ namespace AdventOfCode.Day3
                 {
                     if (line.Contains(".."))
                     {
-                        currentPath = currentPath.Replace($"{currentDirectory.Name}/", "");
+                        currentPath = currentPath.Substring(0, currentPath.Length - currentName.Length);
+                        var startIndex = currentPath.TrimEnd('/').LastIndexOf("/") + 1;
+                        currentName = directories.Where(y => y.Path == currentPath).Select(x => x.Name).First();
                     }
                     else
                     {
@@ -49,11 +52,11 @@ namespace AdventOfCode.Day3
                             directories.Add(currentDirectory);
                         }
 
-                        var directoryName = line.Substring(5, line.Length - 5); //5 is length of "$ cd "
-                        currentPath += $"{directoryName}/";
+                        currentName = line.Substring(5, line.Length - 5) + "/"; //5 is length of "$ cd "
+                        currentPath += currentName;
                         currentDirectory = new Directory()
                         {
-                            Name = directoryName,
+                            Name = currentName,
                             Path = currentPath,
                         };
                     }
@@ -70,18 +73,24 @@ namespace AdventOfCode.Day3
 
         private long SolvePart1(List<Directory> directories)
         {
-            //Could be miss ordered?
-            //directories = directories.OrderByDescending(x => x.Path.Count(y => y == '/')).ToList();
-            //directories = directories.OrderByDescending(x => directories.Count(y => y.Path.Contains(x.Path))).ToList();
+            directories = directories.OrderByDescending(x => x.Path.Count(y => y == '/')).ToList();
 
             directories.ForEach(x => x.IncreaseSizeToIncludeChildren(directories));
 
             return directories.Where(x => x.Size < 100000).Sum(x => x.Size);
         }
 
-        private string SolvePart2(List<Directory> directories)
+        private long SolvePart2(List<Directory> directories)
         {
-            return "";
+            var totalDiskSpaceUsed = 70000000 - directories.Sum(x => x.Size);
+
+            var totalSizeNeeded = 30000000 - totalDiskSpaceUsed;
+
+            directories.ForEach(x => x.IncreaseSizeToIncludeChildren(directories));
+
+            var smallestDirectory = directories.Where(x=>x.Size > totalSizeNeeded).OrderBy(x=>x.Size).First();
+
+            return smallestDirectory.Size;
         }
     }
     class Directory
@@ -92,7 +101,7 @@ namespace AdventOfCode.Day3
 
         internal void IncreaseSizeToIncludeChildren(List<Directory> directories)
         {
-            this.Size += directories.Where(x => x.Path.Contains(this.Path)).Sum(x => x.Size);
+            this.Size = directories.Where(x => x.Path.Contains(this.Path)).Sum(x => x.Size);
         }
     }
 }
