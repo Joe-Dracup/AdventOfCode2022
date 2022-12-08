@@ -42,7 +42,6 @@ namespace AdventOfCode.Day3
                     if (line.Contains(".."))
                     {
                         currentPath = currentPath.Substring(0, currentPath.Length - currentName.Length);
-                        var startIndex = currentPath.TrimEnd('/').LastIndexOf("/") + 1;
                         currentName = directories.Where(y => y.Path == currentPath).Select(x => x.Name).First();
                     }
                     else
